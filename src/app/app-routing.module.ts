@@ -18,9 +18,6 @@ const routes: Routes = [
   {
     path: 'reservar',
     loadChildren: () => import('./reservar/reservar.module').then( m => m.ReservarPageModule)
-  },  {
-    path: 'pokemon',
-    loadChildren: () => import('./pokemon/pokemon.module').then( m => m.PokemonPageModule)
   },
 
 ];
