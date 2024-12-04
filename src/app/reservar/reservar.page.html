@@ -1,0 +1,68 @@
+<ion-content class="reservas-background">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Reservas</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Sección de selección de fecha y horario -->
+  <div class="shadow-box">
+    <ion-item>
+      <ion-label position="floating">Fecha</ion-label>
+      <ion-datetime 
+        displayFormat="DD/MM/YYYY" 
+        [(ngModel)]="selectedDate" 
+        (ionChange)="cargarSecciones()"
+        [min]="hoy">
+      </ion-datetime>
+    </ion-item>
+  </div>
+
+  <!-- Mostrar mensaje si no hay cupos -->
+  <div *ngIf="mensaje" class="shadow-box">
+    <ion-card>
+      <ion-card-content>
+        {{ mensaje }}
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Lista de secciones disponibles -->
+  <div *ngIf="secciones.length > 0" class="shadow-box">
+    <ion-list>
+      <ion-item *ngFor="let seccion of secciones">
+        <ion-label>{{ seccion.hora }}</ion-label>
+        <ion-button [color]="seccion.disponible ? 'success' : 'danger'" 
+                    (click)="seccionSeleccionada = seccion" 
+                    [disabled]="!seccion.disponible">
+          <ion-icon name="checkmark-circle" *ngIf="seccion.disponible"></ion-icon>
+          <ion-icon name="close-circle" *ngIf="!seccion.disponible"></ion-icon>
+          {{ seccion.disponible ? 'Seleccionar' : 'Sin Cupo' }}
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Campo de correo siempre visible -->
+  <div class="shadow-box">
+    <ion-item>
+      <ion-label position="floating">Correo Electrónico</ion-label>
+      <ion-input [(ngModel)]="correoUsuario" placeholder="Ingrese su correo"></ion-input>
+    </ion-item>
+  </div>
+
+  <!-- Botón de confirmar reserva -->
+  <ion-button expand="full" (click)="confirmarReserva()">Confirmar Reserva</ion-button>
+
+  <!-- Mostrar mensaje de confirmación de reserva -->
+  <div *ngIf="mensajeReserva" class="shadow-box">
+    <ion-card>
+      <ion-card-content>
+        {{ mensajeReserva }}
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botones para modificar o eliminar la reserva -->
+    <ion-button expand="full" color="danger" (click)="eliminarReserva()">Eliminar</ion-button>
+  </div>
+</ion-content>

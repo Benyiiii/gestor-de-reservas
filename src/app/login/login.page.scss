@@ -1,0 +1,75 @@
+/* Fondo de la imagen de la sede de Puerto Montt */
+.background-image {
+  background: url('/assets/puerto-montt-portada.jpg') no-repeat center center/cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Para que la imagen esté detrás del contenido */
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Asegura que el contenido esté centrado verticalmente */
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.9); /* Fondo semitransparente para mejor legibilidad */
+  border-radius: 15px;
+  padding: 30px 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Espaciado en los ítems */
+ion-item {
+  margin-bottom: 20px;
+}
+
+/* Estilos para los labels */
+ion-label {
+  color: #003366; /* Azul oscuro */
+  font-weight: bold;
+}
+
+
+
+
+
+
+/* Para el label cuando el input está en foco o tiene contenido */
+ion-item {
+  position: relative; /* Necesario para el posicionamiento del label */
+}
+
+ion-input:not(:placeholder-shown) + ion-label,
+ion-input:focus + ion-label {
+  top: -10px; /* Eleva el label cuando hay valor o está en foco */
+  font-size: 12px; /* Tamaño reducido del texto */
+  color: #003366; /* Color del label */
+  transition: all 0.2s ease; /* Transición suave */
+}
+
+/* Estilos para los botones */
+ion-button {
+  margin-top: 20px;
+  border-radius: 20px;
+  background-color: #FFD700; /* Amarillo */
+  color: #003366; /* Azul oscuro */
+}
+
+ion-button[expand="block"] {
+  width: 100%;
+}
+
+ion-button[fill="clear"] {
+  color: #003366;
+}
+
+ion-toolbar {
+  background-color: rgba(0, 0, 0, 0.5); /* Barra semitransparente */
+}

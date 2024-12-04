@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="background-image"></div>
+  <h1 class="shadow-box">Bienvenido, {{ username }} al Sistema de Reservas del Gimnasio</h1>
+  <p class="shadow-box">
+    Nuestro gimnasio ofrece secciones para reservas de lunes a viernes. Cada sección tiene una duración de 1 hora y media y cuenta con un cupo para 20 personas. Las secciones están disponibles desde las 8:30 AM hasta las 5:30 PM.
+  </p>
+  <p class="shadow-box">
+    Por favor, utiliza tu RUT para registrarte y realizar una reserva. Cada usuario puede reservar solo una sección por día.
+  </p>
+
+  <div class="reservation-call shadow-box">
+    <h2 class="animated-text">¡Reserva Ahora!</h2>
+    <div class="arrow-container">
+      <span class="arrow">&#x2193;</span>
+      <span class="arrow">&#x2193;</span>
+      <span class="arrow">&#x2193;</span>
+    </div>
+  </div>
+
+  <!-- Botón de reserva -->
+  <ion-button color="primary" shape="round" expand="full" routerLink="/reservar" class="highlight-button">Hacer Reserva</ion-button>
+
+  <!-- Botón para generar una frase motivacional -->
+  <ion-button color="secondary" shape="round" expand="full" (click)="getMotivationalQuote()" class="highlight-button">
+    Obtener Frase Motivacional
+  </ion-button>
+
+  <!-- Mostrar la frase motivacional -->
+  <p class="shadow-box motivational-quote">{{ motivationalQuote }}</p>
+
+  <!-- Contenedor para los íconos en la parte inferior -->
+  <div class="footer-icons">
+    <ion-button class="shadow-box" href="https://www.instagram.com/tu_instagram" fill="clear">
+      <ion-icon slot="icon-only" name="logo-instagram"></ion-icon>
+    </ion-button>
+    <ion-button class="shadow-box" href="mailto:tu_correo@gmail.com" fill="clear">
+      <ion-icon slot="icon-only" name="mail-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-content>

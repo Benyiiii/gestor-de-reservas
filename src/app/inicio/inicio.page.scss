@@ -1,0 +1,104 @@
+/* Fondo de la imagen de la sede de Puerto Montt */
+.background-image {
+  background: url('/assets/puerto-montt-portada.jpg') no-repeat center center/cover; /* Asegúrate de que la ruta sea correcta */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Para que la imagen esté detrás del contenido */
+}
+
+/* Estilos para el contenido principal */
+h1 {
+  color: #003366; /* Azul oscuro */
+  text-align: center;
+  margin-top: 20px;
+  font-size: 24px; /* Tamaño del encabezado */
+}
+
+p {
+  color: #003366; /* Azul oscuro */
+  font-size: 16px; /* Tamaño de la fuente */
+  padding: 0 20px;
+  text-align: center;
+}
+
+/* Estilos para las cajas de sombra */
+.shadow-box {
+  background: rgba(255, 255, 255, 0.9); /* Fondo semitransparente para mejor legibilidad */
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px auto; /* Espaciado vertical */
+  max-width: 600px; /* Ancho máximo para el contenido */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el llamado a la reserva */
+.reservation-call {
+  text-align: center;
+  margin: 30px 0; /* Espaciado superior e inferior */
+}
+
+.animated-text {
+  font-size: 22px; /* Tamaño del texto animado */
+  color: #FFD700; /* Amarillo */
+  animation: pulse 1.5s infinite; /* Efecto de animación */
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Contenedor para las flechas */
+.arrow-container {
+  display: flex;
+  justify-content: center;
+}
+
+.arrow {
+  font-size: 30px; /* Tamaño de las flechas */
+  color: #FFD700; /* Amarillo */
+  margin: 0 5px; /* Espaciado horizontal entre flechas */
+}
+
+/* Estilos para el botón de reserva */
+.highlight-button {
+  margin-top: 20px;
+  border-radius: 20px;
+  background-color: #FFD700; /* Amarillo */
+  color: #003366; /* Azul oscuro */
+}
+
+/* Estilos para los íconos en la parte inferior */
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+ion-button {
+  color: #003366; /* Azul oscuro para los íconos */
+}
+/* Estilos para centrar el contenido */
+.reservation-call {
+  text-align: center;
+  margin: 30px auto; /* Margen superior e inferior para espaciado */
+  max-width: 600px; /* Ancho máximo para el contenedor */
+  padding: 15px; /* Espaciado interno para el texto */
+}
+/* Estilos para los íconos en la parte inferior */
+.footer-icons {
+  display: flex; /* Usar flexbox para alinear los íconos */
+  justify-content: center; /* Centra los íconos horizontalmente */
+  gap: 0; /* Sin espacio entre los íconos */
+  padding: 10px; /* Espaciado alrededor de los íconos */
+}
+
+/* Estilos para los botones de los íconos */
+.footer-icons ion-button {
+  margin: 0; /* Sin margen para que queden juntos */
+}

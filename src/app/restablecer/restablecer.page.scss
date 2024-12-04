@@ -1,0 +1,30 @@
+/* Fondo azul oscuro */
+.background-blue {
+  background-color: #003366; /* Azul oscuro */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Asegura que esté detrás del contenido */
+}
+
+/* Estilos para ion-content */
+ion-content {
+  color: #ffffff; /* Texto en blanco */
+}
+
+/* Estilos para la caja de restablecimiento */
+.restablecer-container {
+  margin: auto; /* Centra el contenedor */
+  padding: 20px; /* Espaciado interno */
+  max-width: 400px; /* Ancho máximo */
+}
+
+/* Estilo para la sombra de la caja */
+.shadow-box {
+  background: rgba(255, 255, 255, 0.9); /* Fondo semitransparente */
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

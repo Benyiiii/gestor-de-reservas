@@ -1,0 +1,42 @@
+/* Estilo del ion-content para fondo azul oscuro */
+.reservas-background {
+  background-color: #003366 !important; /* Azul oscuro de la institución */
+  color: #ffffff; /* Texto en blanco para contraste */
+  --background: transparent; /* Asegúrate de que el background sea transparente */
+}
+
+/* Estilos para las cajas de sombra */
+.shadow-box {
+  background: rgba(255, 255, 255, 0.9); /* Fondo semitransparente para mejor legibilidad */
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px auto; /* Espaciado vertical */
+  max-width: 600px; /* Ancho máximo para el contenido */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo de los elementos ion-item */
+ion-item {
+  --background: transparent; /* Hacer que el fondo sea transparente */
+}
+
+/* Estilo del botón de confirmar reserva */
+ion-button {
+  background-color: #FFD700; /* Amarillo para el botón */
+  color: #003366; /* Azul oscuro para el texto del botón */
+}
+
+/* Estilos para los mensajes de confirmación */
+ion-card {
+  background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para los mensajes */
+  color: #003366; /* Color del texto */
+}
+
+/* Estilos para el botón de modificar y eliminar */
+ion-button[color="warning"] {
+  background-color: #FFA500; /* Naranja para el botón de modificar */
+}
+
+ion-button[color="danger"] {
+  background-color: #FF4500; /* Rojo para el botón de eliminar */
+}
