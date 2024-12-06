@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-reservar',
@@ -7,15 +8,14 @@ import { Component } from '@angular/core';
 })
 export class ReservarPage {
   hoy: string = new Date().toISOString();
-  selectedDate: string = this.hoy;
+  selectedDate: string = this.hoy.split('T')[0]; // Solo la fecha
   secciones: { hora: string; disponible: boolean }[] = [];
-  reservas: Map<string, Map<string, string[]>> = new Map(); // Estructura para almacenar reservas
-  mensaje: string = '';
-  correoUsuario: string = ''; // Ahora usamos correo electrónico
+  correoUsuario: string = '';
   seccionSeleccionada: { hora: string; disponible: boolean } | null = null;
   mensajeReserva: string = '';
+  mensaje: string = '';
 
-  constructor() {
+  constructor(private firestore: Firestore) {
     this.secciones = [
       { hora: '08:30-10:00', disponible: true },
       { hora: '10:00-11:30', disponible: true },
@@ -26,103 +26,144 @@ export class ReservarPage {
     ];
   }
 
-  cargarSecciones() {
-    const fechaSeleccionada = new Date(this.selectedDate);
-    const diaDeLaSemana = fechaSeleccionada.getDay();
+  // Método para cargar las secciones según la fecha seleccionada
+  async cargarSecciones() {
+    console.log('Fecha seleccionada:', this.selectedDate);
 
-    if (diaDeLaSemana === 0 || diaDeLaSemana === 6) {
-      this.mensaje = 'Las reservas están disponibles solo de lunes a viernes.';
-      this.secciones = [];
+    // Verificar que la fecha es válida
+    if (!this.selectedDate) {
+      console.error('Fecha no válida');
       return;
     }
 
-    this.mensaje = '';
-    const reservasEnFecha = this.reservas.get(this.selectedDate) || new Map<string, string[]>();
+    // Crear la referencia al documento de Firestore
+    const fechaDocRef = doc(this.firestore, `reservas/${this.selectedDate}`);
 
-    const todasReservas = Array.from(reservasEnFecha.values()).reduce((acc, val) => acc.concat(val), []);
+    try {
+      const docSnapshot = await getDoc(fechaDocRef);
 
-    this.secciones.forEach((seccion) => {
-      seccion.disponible = todasReservas.filter((hora) => hora === seccion.hora).length < 20;
-    });
-  }
+      // Verificar si el documento existe
+      if (docSnapshot.exists()) {
+        const reservas = docSnapshot.data() || {};
 
-  confirmarReserva() {
-    if (!this.correoUsuario) {
-      alert('Por favor, ingrese su correo electrónico.');
-      return;
-    }
+        console.log('Reservas para la fecha seleccionada:', reservas);
 
-    const fechaSeleccionada = new Date(this.selectedDate);
-    const diaDeLaSemana = fechaSeleccionada.getDay();
-
-    if (diaDeLaSemana === 0 || diaDeLaSemana === 6) {
-      alert('No se permiten reservas los sábados ni domingos.');
-      return;
-    }
-
-    // Verificar si el correo existe en el sistema (localStorage)
-    const usuariosRegistrados = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const usuarioExiste = usuariosRegistrados.some((u: any) => u.email === this.correoUsuario);
-
-    if (!usuarioExiste) {
-      alert('El correo no está registrado en el sistema. Regístrese antes de reservar.');
-      return;
-    }
-
-    if (this.seccionSeleccionada) {
-      const reservasEnFecha = this.reservas.get(this.selectedDate) || new Map<string, string[]>();
-
-      const todasReservas = Array.from(reservasEnFecha.values()).reduce((acc, val) => acc.concat(val), []);
-      const reservasParaSeccion = todasReservas.filter((hora) => hora === this.seccionSeleccionada?.hora).length;
-
-      if (reservasParaSeccion < 20) {
-        const reservasUsuario = reservasEnFecha.get(this.correoUsuario) || [];
-        reservasUsuario.push(this.seccionSeleccionada.hora);
-        reservasEnFecha.set(this.correoUsuario, reservasUsuario);
-        this.reservas.set(this.selectedDate, reservasEnFecha);
-
-        const fechaFormateada = fechaSeleccionada.toISOString().split('T')[0];
-        this.mensajeReserva = `Reserva confirmada para el ${fechaFormateada} a las ${this.seccionSeleccionada.hora}. Correo: ${this.correoUsuario}`;
-        this.correoUsuario = '';
-        this.seccionSeleccionada = null;
-        this.cargarSecciones();
+        // Cargar la disponibilidad de las secciones
+        this.secciones.forEach((seccion) => {
+          const usuariosEnSeccion = reservas[seccion.hora]
+            ? Object.keys(reservas[seccion.hora]).length
+            : 0;
+          seccion.disponible = usuariosEnSeccion < 20;
+        });
       } else {
-        alert('La sección seleccionada no tiene cupo disponible.');
+        // Si no hay documento para la fecha, todas las secciones están disponibles
+        console.log('No hay reservas para esta fecha. Estableciendo todas las secciones como disponibles.');
+        this.secciones.forEach((seccion) => (seccion.disponible = true));
       }
-    } else {
-      alert('Error: No se ha seleccionado ninguna sección.');
+
+      console.log('Secciones cargadas:', this.secciones);
+    } catch (error) {
+      console.error('Error al cargar las secciones desde Firestore:', error);
+      alert('Error al cargar las secciones desde Firestore. Revisar consola para más detalles.');
     }
   }
 
-  eliminarReserva() {
-    const reservasEnFecha = this.reservas.get(this.selectedDate);
+  // Método para confirmar la reserva
+  async confirmarReserva() {
+    if (!this.correoUsuario || !this.seccionSeleccionada) {
+      alert('Por favor, complete todos los campos.');
+      return;
+    }
 
-    if (reservasEnFecha && reservasEnFecha.has(this.correoUsuario)) {
-      reservasEnFecha.delete(this.correoUsuario);
-      this.reservas.set(this.selectedDate, reservasEnFecha);
+    console.log('Sección seleccionada:', this.seccionSeleccionada);
+    console.log('Correo del usuario:', this.correoUsuario);
 
-      this.mensajeReserva = `Reserva eliminada para el ${this.selectedDate}.`;
+    try {
+      const fechaDocRef = doc(this.firestore, `reservas/${this.selectedDate}`);
+      const hora = this.seccionSeleccionada.hora;
+
+      // Obtenemos las reservas existentes
+      const docSnapshot = await getDoc(fechaDocRef);
+      let reservas: any = {};
+
+      if (docSnapshot.exists()) {
+        reservas = docSnapshot.data() || {};
+      }
+
+      console.log('Reservas actuales:', reservas);
+
+      // Verificamos el cupo de la sección
+      const usuariosEnSeccion = reservas[hora]
+        ? Object.keys(reservas[hora]).length
+        : 0;
+
+      if (usuariosEnSeccion < 20) {
+        // Agregar la reserva
+        if (!reservas[hora]) {
+          reservas[hora] = {};
+        }
+        reservas[hora][this.correoUsuario] = true;
+
+        // Imprimir los datos antes de guardar para depuración
+        console.log('Datos antes de guardar:', reservas);
+
+        // Guardamos la reserva en Firestore
+        await setDoc(fechaDocRef, reservas, { merge: true });
+
+        // Imprimir después de guardar para verificar
+        console.log('Reserva guardada.');
+
+        this.mensajeReserva = `Reserva confirmada para ${this.selectedDate} a las ${hora}.`;
+      } else {
+        alert('La sección seleccionada ya no está disponible.');
+      }
 
       this.correoUsuario = '';
+      this.seccionSeleccionada = null;
       this.cargarSecciones();
-    } else {
-      alert('No se encontró ninguna reserva para este correo.');
+    } catch (error) {
+      console.error('Error al confirmar la reserva:', error);
+      alert('Error al confirmar la reserva.');
     }
   }
 
-  modificarReserva() {
-    if (!this.correoUsuario) {
-      alert('Por favor, ingrese su correo para modificar la reserva.');
+  // Método para eliminar la reserva
+  async eliminarReserva() {
+    if (!this.seccionSeleccionada) {
+      alert('No hay una reserva seleccionada para eliminar.');
       return;
     }
 
-    const reservasEnFecha = this.reservas.get(this.selectedDate);
+    try {
+      const fechaDocRef = doc(this.firestore, `reservas/${this.selectedDate}`);
+      const hora = this.seccionSeleccionada.hora;
 
-    if (reservasEnFecha && reservasEnFecha.has(this.correoUsuario)) {
-      reservasEnFecha.delete(this.correoUsuario);
-      this.confirmarReserva();
-    } else {
-      alert('No se encontró ninguna reserva para este correo.');
+      // Obtenemos las reservas existentes
+      const docSnapshot = await getDoc(fechaDocRef);
+      let reservas: any = {};
+
+      if (docSnapshot.exists()) {
+        reservas = docSnapshot.data() || {};
+      }
+
+      console.log('Reservas antes de eliminar:', reservas);
+
+      // Verificar si el usuario está en la reserva
+      if (reservas[hora] && reservas[hora][this.correoUsuario]) {
+        delete reservas[hora][this.correoUsuario];  // Eliminar la reserva
+
+        // Guardar los cambios
+        await setDoc(fechaDocRef, reservas, { merge: true });
+
+        this.mensajeReserva = `Reserva eliminada para ${this.selectedDate} a las ${hora}.`;
+        this.seccionSeleccionada = null;
+      } else {
+        alert('No se encontró una reserva con ese correo en la sección seleccionada.');
+      }
+
+    } catch (error) {
+      console.error('Error al eliminar la reserva:', error);
+      alert('Error al eliminar la reserva.');
     }
   }
 }
